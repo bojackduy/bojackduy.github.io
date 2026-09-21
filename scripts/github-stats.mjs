@@ -50,7 +50,9 @@ function esc(s) {
     .replace(/"/g, "&quot;");
 }
 
-const user = gh(["api", "user", "--jq", "{login:.login,name:.name,followers:.followers,following:.following,public_repos:.public_repos}"]);
+// NOTE: use the public users/:login endpoint, not /user — the latter 403s for
+// GitHub Actions' integration token, which this script also runs with in CI.
+const user = gh(["api", `users/${LOGIN}`, "--jq", "{login:.login,name:.name,followers:.followers,following:.following,public_repos:.public_repos}"]);
 const repos = gh(["api", `users/${LOGIN}/repos`, "--paginate", "--jq", "[.[] | {name:.name,description:.description,stars:.stargazers_count,forks:.forks_count,language:.language,fork:.fork,url:.html_url,pushed:.pushed_at}]"]);
 
 const owned = repos.filter((r) => !r.fork);
