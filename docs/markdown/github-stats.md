@@ -21,9 +21,9 @@
 
 | Language | Share |
 |---|---:|
-| TypeScript | 77.6% |
+| TypeScript | 77.5% |
 | Rust | 9.3% |
-| JavaScript | 7.1% |
+| JavaScript | 7.3% |
 | HTML | 2.4% |
 | Lua | 1.5% |
 | CSS | 1.4% |

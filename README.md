@@ -23,13 +23,16 @@ npm run lint
 npm run build
 ```
 
-Refresh the GitHub stats snapshot (requires `gh-personal`):
+GitHub stats (card, note tables, most-starred) refresh automatically: the
+`refresh-stats` workflow in this repo regenerates the snapshot monthly (plus
+manual dispatch from the Actions tab), and the matching workflow in
+`bojackduy/bojackduy` syncs the profile README from it.
+
+Manual refresh (requires `gh-personal`):
 
 ```bash
 npm run stats
 ```
-
-After refreshing, copy the regenerated tables into the profile README (`~/Code/bojackduy`, repo `bojackduy/bojackduy`) so github.com/bojackduy stays in sync.
 
 The production build is written to `docs/` and served by GitHub Pages from the `main` branch.
 
