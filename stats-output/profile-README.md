@@ -1,8 +1,16 @@
-# GitHub Stats
+# Hi, I'm Trinh Chan Duy 👋
 
-![GitHub statistics card](/img/github-stats.svg)
+Backend software engineer and open-source developer working across production systems, AI-enabled products, and developer tooling.
 
-*Snapshot of [github.com/bojackduy](https://github.com/bojackduy) on 2026-09-21 — 22 public repos, 17 stars earned, 15 following. Refresh with `npm run stats`.*
+- 🌐 Portfolio: **[bojackduy.github.io](https://bojackduy.github.io)**
+- 📧 Contact: [trinhchanduy.30072005@gmail.com](mailto:trinhchanduy.30072005@gmail.com)
+- 🎓 Honors Program in Computer Science @ VNU-HCM
+
+## GitHub stats
+
+![GitHub statistics card](https://bojackduy.github.io/img/github-stats.svg)
+
+*Snapshot of this profile on 2026-09-21 — 22 public repos, 17 stars earned, 15 following.*
 
 ## Most starred
 
@@ -27,3 +35,5 @@
 | HTML | 2.4% |
 | Lua | 1.5% |
 | CSS | 1.4% |
+
+*Stats are generated from live GitHub data — refresh flow documented in [bojackduy.github.io](https://github.com/bojackduy/bojackduy.github.io).*

@@ -34,8 +34,11 @@ const LANG_COLORS = {
 };
 const FALLBACK_COLOR = "#8b949e";
 
+// `gh-personal` locally; plain `gh` in CI (GH_TOKEN provides auth there).
+const GH = process.env.GH_CMD || "gh-personal";
+
 function gh(args, json = true) {
-  const out = execFileSync("gh-personal", args, { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
+  const out = execFileSync(GH, args, { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
   return json ? JSON.parse(out) : out;
 }
 
@@ -303,5 +306,25 @@ const md =
   `| Language | Share |\n|---|---:|\n${langTable}\n`;
 
 writeFileSync(join(ROOT, "public/markdown/github-stats.md"), md);
+
+// Full profile README for the bojackduy/bojackduy repo — kept in sync by the
+// monthly refresh-stats workflows (see .github/workflows in both repos).
+const profileMd =
+  `# Hi, I'm Trinh Chan Duy 👋\n\n` +
+  `Backend software engineer and open-source developer working across production systems, AI-enabled products, and developer tooling.\n\n` +
+  `- 🌐 Portfolio: **[bojackduy.github.io](https://bojackduy.github.io)**\n` +
+  `- 📧 Contact: [trinhchanduy.30072005@gmail.com](mailto:trinhchanduy.30072005@gmail.com)\n` +
+  `- 🎓 Honors Program in Computer Science @ VNU-HCM\n\n` +
+  `## GitHub stats\n\n` +
+  `![GitHub statistics card](https://bojackduy.github.io/img/github-stats.svg)\n\n` +
+  `*Snapshot of this profile on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(user.following)} following.*\n\n` +
+  `## Most starred\n\n` +
+  `| Project | What it is | ★ | Forks | Language |\n|---|---|---:|---:|---|\n${repoRows}\n\n` +
+  `## Top languages\n\n` +
+  `| Language | Share |\n|---|---:|\n${langTable}\n\n` +
+  `*Stats are generated from live GitHub data — refresh flow documented in [bojackduy.github.io](https://github.com/bojackduy/bojackduy.github.io).*\n`;
+
+mkdirSync(join(ROOT, "stats-output"), { recursive: true });
+writeFileSync(join(ROOT, "stats-output/profile-README.md"), profileMd);
 
 console.log(`repos=${user.public_repos} stars=${totalStars} forks=${totalForks} followers=${user.followers} contributions=${calendar.total} heat_weeks=${calendar.weeks.length} langs=${topLangs.map((l) => `${l.lang} ${l.pct.toFixed(0)}%`).join(", ")}`);
