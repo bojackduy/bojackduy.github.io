@@ -23,6 +23,12 @@ npm run lint
 npm run build
 ```
 
+Refresh the GitHub stats snapshot (requires `gh-personal`):
+
+```bash
+npm run stats
+```
+
 The production build is written to `docs/` and served by GitHub Pages from the `main` branch.
 
 ## Credits

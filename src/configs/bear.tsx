@@ -21,6 +21,13 @@ const bear: BearData[] = [
         excerpt: "Experience, education, awards, and skills"
       },
       {
+        id: "github-stats",
+        title: "GitHub Stats",
+        file: "markdown/github-stats.md",
+        icon: "i-icon-park-outline:github",
+        excerpt: "Stars, repos, followers, and top languages"
+      },
+      {
         id: "about-site",
         title: "About This Site",
         file: "markdown/about-site.md",

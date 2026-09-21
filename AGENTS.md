@@ -23,6 +23,7 @@ The production build is emitted to `docs/` for GitHub Pages.
 - `src/configs/terminal.tsx`: fake terminal filesystem
 - `public/markdown/`: biography, experience, and project case studies
 - `src/configs/user.ts`: profile name and avatar
+- `scripts/github-stats.mjs`: regenerates `public/img/github-stats.svg` + `public/markdown/github-stats.md` via `npm run stats` (needs `gh-personal`)
 
 ## Conventions
 
