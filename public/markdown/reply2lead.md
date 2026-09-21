@@ -2,6 +2,10 @@
 
 Reply2Lead receives social messages, qualifies leads, grounds suggested replies in business knowledge, automates responses, and supports human takeover across multiple shops.
 
+![Reply2Lead architecture schematic](/img/projects/arch-reply2lead.svg)
+
+*Simplified architecture schematic.*
+
 ## Contributions
 
 - Built asynchronous, claim-gated AI autopilot orchestration with deduplication and conversation locking.

@@ -2,6 +2,10 @@
 
 A local-first search engine for AI coding conversations. Telescope indexes session history in the background and provides fast scoped search without sending private chats to a hosted service.
 
+![Telescope search interface](/img/projects/telescope.png)
+
+*Telescope searching local AI coding history — result list with a live match preview.*
+
 ## Highlights
 
 - SQLite FTS5 for lexical retrieval plus optional vector search

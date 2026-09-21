@@ -2,6 +2,10 @@
 
 Appsfy helps teams collect app-store screenshots, browse mobile design references, organize screenshot sets, and create store-marketing assets with AI-assisted layouts.
 
+![Appsfy architecture schematic](/img/projects/arch-appsfy.svg)
+
+*Simplified architecture schematic.*
+
 ## Contributions
 
 - Built screenshot-set APIs and lifecycle operations.

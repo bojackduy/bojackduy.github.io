@@ -2,6 +2,10 @@
 
 I worked on a full-stack platform that collects retailer prices on schedules or demand, normalizes store and product data, monitors ingestion quality, and exposes competitive pricing analytics.
 
+![Price intelligence architecture schematic](/img/projects/arch-playlab.svg)
+
+*Simplified architecture schematic.*
+
 ## Contributions
 
 - Designed durable asynchronous ingestion with persistent jobs, separated workers, Redis, and BullMQ.

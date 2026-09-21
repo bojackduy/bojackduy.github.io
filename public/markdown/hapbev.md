@@ -2,6 +2,10 @@
 
 At Tiger Tribe / HEINEKEN, I contributed to an enterprise backend for beverage supply-chain planning: orders, demand forecasts, inventory, sell-out capture, partner planning, notifications, and spreadsheet exchange.
 
+![HAPBev architecture schematic](/img/projects/arch-hapbev.svg)
+
+*Simplified architecture schematic.*
+
 ## Contributions
 
 - Built and modularized sell-out workflows covering weekly/monthly aggregation, inventory integration, forecast eligibility, and Excel import/export.

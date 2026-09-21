@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="300" viewBox="0 0 800 300" font-family="system-ui, -apple-system, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="800" height="300" rx="16" fill="#eef2f1"/>
+  <rect x="20" y="80" width="170" height="130" rx="12" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+  <text x="105" y="130" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">Screenshots</text>
+  <text x="105" y="156" text-anchor="middle" font-size="12" fill="#64748b">store metadata</text>
+  <text x="105" y="174" text-anchor="middle" font-size="12" fill="#64748b">+ creatives</text>
+  <rect x="216" y="80" width="170" height="130" rx="12" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+  <text x="301" y="130" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">Pipeline</text>
+  <text x="301" y="156" text-anchor="middle" font-size="12" fill="#64748b">normalize</text>
+  <text x="301" y="174" text-anchor="middle" font-size="12" fill="#64748b">+ store</text>
+  <rect x="412" y="80" width="170" height="130" rx="12" fill="#0d9488"/>
+  <text x="497" y="130" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">Platform API</text>
+  <text x="497" y="156" text-anchor="middle" font-size="12" fill="#d7f0ec">sets · assets</text>
+  <text x="497" y="174" text-anchor="middle" font-size="12" fill="#d7f0ec">· analytics</text>
+  <rect x="608" y="80" width="170" height="130" rx="12" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+  <text x="693" y="130" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">Studio</text>
+  <text x="693" y="156" text-anchor="middle" font-size="12" fill="#64748b">editor + AI</text>
+  <text x="693" y="174" text-anchor="middle" font-size="12" fill="#64748b">layouts</text>
+  <line x1="190" y1="145" x2="210" y2="145" stroke="#64748b" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <line x1="386" y1="145" x2="406" y2="145" stroke="#64748b" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <line x1="582" y1="145" x2="602" y2="145" stroke="#64748b" stroke-width="2.5" marker-end="url(#arrow)"/>
+</svg>

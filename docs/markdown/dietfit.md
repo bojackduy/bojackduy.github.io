@@ -2,6 +2,10 @@
 
 DietFit combines meal scanning and logging, personalized goals, conversational coaching, health-aware check-ins, behavioral insights, and generated weekly meal plans.
 
+![DietFit architecture schematic](/img/projects/arch-dietfit.svg)
+
+*Simplified architecture schematic.*
+
 ## Contributions
 
 - Built the weekly meal-plan data model and persistence workflow.

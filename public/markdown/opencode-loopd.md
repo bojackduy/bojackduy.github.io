@@ -2,6 +2,10 @@
 
 An autonomous background-goal runtime for OpenCode. It lets a parent chat stay interactive while isolated child sessions continue implementing, testing, and reporting progress.
 
+![Loopd operations dashboard](/img/projects/loopd.png)
+
+*The Loopd dashboard inside OpenCode — goal states plus steering and completion commands.*
+
 ## Highlights
 
 - Event-driven state machine per goal

@@ -111,7 +111,7 @@
 }
 
 .bear .markdown img {
-  @apply inline-block;
+  @apply block max-w-full h-auto mx-auto rounded-lg border border-c-300 my-4;
 }
 
 .bear .markdown table {

@@ -2,6 +2,10 @@
 
 A local-first terminal Confluence reader that syncs selected spaces into SQLite, supports scoped search, and renders formatted documents offline.
 
+![LazyConfluence document view](/img/projects/lazyconfluence.png)
+
+*LazyConfluence rendering a Confluence page in the terminal — navigator, document, and outline panes.*
+
 ## Highlights
 
 - PNG, JPEG, GIF, and SVG previews inside capable terminals
