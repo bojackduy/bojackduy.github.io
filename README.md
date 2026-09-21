@@ -29,6 +29,8 @@ Refresh the GitHub stats snapshot (requires `gh-personal`):
 npm run stats
 ```
 
+After refreshing, copy the regenerated tables into the profile README (`~/Code/bojackduy`, repo `bojackduy/bojackduy`) so github.com/bojackduy stays in sync.
+
 The production build is written to `docs/` and served by GitHub Pages from the `main` branch.
 
 ## Credits
