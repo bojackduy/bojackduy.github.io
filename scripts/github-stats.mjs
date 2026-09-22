@@ -304,10 +304,15 @@ const starPageUrl = `https://star-history.com/#${starRepos.join("&")}&Date`;
 const starEmbed =
   `[![Star history across all ${owned.length} repos](${starChartUrl})](${starPageUrl})\n`;
 
+const badgesRow =
+  `[![GitHub followers](https://img.shields.io/github/followers/${LOGIN}?style=for-the-badge&color=00bfff&label=Followers)](https://github.com/${LOGIN}?tab=followers) ` +
+  `![Profile views](https://komarev.com/ghpvc/?username=${LOGIN}&style=for-the-badge&color=00bfff&labelColor=0d1117&label=Profile+Views)\n`;
+
 const md =
   `# GitHub Stats\n\n` +
   `![GitHub statistics card](/img/github-stats.svg)\n\n` +
   starEmbed + `\n` +
+  badgesRow + `\n` +
   `*Snapshot of [github.com/${user.login}](https://github.com/${user.login}) on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(user.following)} following. Star chart is live, re-rendered by star-history.com on every view. Refresh with \`npm run stats\`.*\n\n` +
   `## Top languages\n\n` +
   `| Language | Share |\n|---|---:|\n${langTable}\n`;
@@ -316,19 +321,42 @@ writeFileSync(join(ROOT, "public/markdown/github-stats.md"), md);
 
 // Full profile README for the bojackduy/bojackduy repo — kept in sync by the
 // monthly refresh-stats workflows (see .github/workflows in both repos).
+const capsuleHeader = "https://capsule-render.vercel.app/api?type=waving&height=280&color=0:1e90ff,100:00bfff&text=Hi,%20I%27m%20Duy&fontColor=ffffff&desc=Backend%20%E2%80%A2%20AI%20Tooling%20%E2%80%A2%20Open%20Source&descAlign=50&fontAlign=50&fontAlignY=40";
+const capsuleFooter = "https://capsule-render.vercel.app/api?type=waving&color=0:1e90ff,100:00bfff&height=120&section=footer";
+const streakUrl = `https://streak-stats.demolab.com/?user=${LOGIN}&theme=transparent&ring=00bfff&fire=00bfff&currStreakLabel=00bfff`;
+
 const profileMd =
+  `<p align="center">\n` +
+  `  <img src="${capsuleHeader}" width="100%" alt="header"/>\n` +
+  `</p>\n\n` +
   `# Hi, I'm Trinh Chan Duy 👋\n\n` +
   `Backend software engineer and open-source developer working across production systems, AI-enabled products, and developer tooling.\n\n` +
-  `- 🌐 Portfolio: **[bojackduy.github.io](https://bojackduy.github.io)**\n` +
-  `- 📧 Contact: [trinhchanduy.30072005@gmail.com](mailto:trinhchanduy.30072005@gmail.com)\n` +
-  `- 🎓 Honors Program in Computer Science @ VNU-HCM\n\n` +
+  `<div align="center">\n\n` +
+  badgesRow + `\n` +
+  `</div>\n\n` +
+  `---\n\n` +
+  `<h2 align="center">👨‍💻 About Me</h2>\n\n` +
+  `| | | |\n|---|---|---|\n` +
+  `| 💭 | **Exploring** | Local-first AI tooling |\n` +
+  `| 🚀 | **Working on** | [OpenCode plugins](https://github.com/${LOGIN}/opencode-loopd) |\n` +
+  `| 🤝 | **Collaborating on** | Open-source AI tooling |\n` +
+  `| 📬 | **Contact** | [trinhchanduy.30072005@gmail.com](mailto:trinhchanduy.30072005@gmail.com) |\n` +
+  `| 🌐 | **Portfolio** | [bojackduy.github.io](https://bojackduy.github.io) |\n` +
+  `| 🎓 | **Studying** | Honors CS @ VNU-HCM |\n\n` +
+  `---\n\n` +
   `## GitHub stats\n\n` +
   `![GitHub statistics card](https://bojackduy.github.io/img/github-stats.svg)\n\n` +
   starEmbed + `\n` +
   `*Snapshot of this profile on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(user.following)} following. Star chart is live, re-rendered by star-history.com on every view.*\n\n` +
+  `<div align="center">\n` +
+  `  <br>\n` +
+  `  <img src="${streakUrl}" alt="GitHub Streak" height="200px"/>\n` +
+  `</div>\n\n` +
+  `---\n\n` +
   `## Top languages\n\n` +
   `| Language | Share |\n|---|---:|\n${langTable}\n\n` +
-  `*Stats are generated from live GitHub data — refresh flow documented in [bojackduy.github.io](https://github.com/bojackduy/bojackduy.github.io).*\n`;
+  `*Stats are generated from live GitHub data — refresh flow documented in [bojackduy.github.io](https://github.com/bojackduy/bojackduy.github.io).*\n\n` +
+  `<img width="100%" src="${capsuleFooter}" alt="footer"/>\n`;
 
 mkdirSync(join(ROOT, "stats-output"), { recursive: true });
 writeFileSync(join(ROOT, "stats-output/profile-README.md"), profileMd);
