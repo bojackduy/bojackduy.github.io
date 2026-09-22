@@ -321,7 +321,7 @@ writeFileSync(join(ROOT, "public/markdown/github-stats.md"), md);
 
 // Full profile README for the bojackduy/bojackduy repo — kept in sync by the
 // monthly refresh-stats workflows (see .github/workflows in both repos).
-const capsuleHeader = "https://capsule-render.vercel.app/api?type=waving&height=280&color=0:1e90ff,100:00bfff&text=Hi,%20I%27m%20Duy&fontColor=ffffff&desc=Backend%20%E2%80%A2%20AI%20Tooling%20%E2%80%A2%20Open%20Source&descAlign=50&fontAlign=50&fontAlignY=40";
+const capsuleHeader = "https://capsule-render.vercel.app/api?type=waving&height=280&color=0:1e90ff,100:00bfff&text=Hi,%20I%27m%20Bojack&fontColor=ffffff&desc=Backend%20%E2%80%A2%20AI%20Tooling%20%E2%80%A2%20Open%20Source&descAlign=50&fontAlign=50&fontAlignY=40";
 const capsuleFooter = "https://capsule-render.vercel.app/api?type=waving&color=0:1e90ff,100:00bfff&height=120&section=footer";
 const streakUrl = `https://streak-stats.demolab.com/?user=${LOGIN}&theme=transparent&ring=00bfff&fire=00bfff&currStreakLabel=00bfff`;
 
