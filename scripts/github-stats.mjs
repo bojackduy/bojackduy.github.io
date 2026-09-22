@@ -292,10 +292,6 @@ const svg =
 mkdirSync(join(ROOT, "public/img"), { recursive: true });
 writeFileSync(join(ROOT, "public/img/github-stats.svg"), svg);
 
-const topRepos = [...owned].sort((a, b) => b.stars - a.stars).slice(0, 8);
-const repoRows = topRepos
-  .map((r) => `| [${r.name}](${r.url}) | ${esc(r.description ?? "—")} | ${r.stars} | ${r.forks} | ${esc(r.language ?? "—")} |`)
-  .join("\n");
 const langTable = topLangs.map((l) => `| ${l.lang} | ${l.pct.toFixed(1)}% |`).join("\n");
 
 // Star-history chart: live-rendered by star-history.com on every view (xkcd
@@ -305,20 +301,16 @@ const starRepos = [...owned].sort((a, b) => b.stars - a.stars).map((r) => `${LOG
 const starParam = starRepos.map((r) => encodeURIComponent(r)).join("%2C");
 const starChartUrl = `https://api.star-history.com/svg?repos=${starParam}&type=Date`;
 const starPageUrl = `https://star-history.com/#${starRepos.join("&")}&Date`;
-const starSection =
-  `## Star History\n\n` +
-  `[![Star history across all ${owned.length} repos](${starChartUrl})](${starPageUrl})\n\n` +
-  `*Live chart — re-rendered by star-history.com on every view. The repo list refreshes with \`npm run stats\`.*\n`;
+const starEmbed =
+  `[![Star history across all ${owned.length} repos](${starChartUrl})](${starPageUrl})\n`;
 
 const md =
   `# GitHub Stats\n\n` +
   `![GitHub statistics card](/img/github-stats.svg)\n\n` +
-  `*Snapshot of [github.com/${user.login}](https://github.com/${user.login}) on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(user.following)} following. Refresh with \`npm run stats\`.*\n\n` +
-  `## Most starred\n\n` +
-  `| Project | What it is | ★ | Forks | Language |\n|---|---|---:|---:|---|\n${repoRows}\n\n` +
+  starEmbed + `\n` +
+  `*Snapshot of [github.com/${user.login}](https://github.com/${user.login}) on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(user.following)} following. Star chart is live, re-rendered by star-history.com on every view. Refresh with \`npm run stats\`.*\n\n` +
   `## Top languages\n\n` +
-  `| Language | Share |\n|---|---:|\n${langTable}\n\n` +
-  starSection;
+  `| Language | Share |\n|---|---:|\n${langTable}\n`;
 
 writeFileSync(join(ROOT, "public/markdown/github-stats.md"), md);
 
@@ -332,13 +324,11 @@ const profileMd =
   `- 🎓 Honors Program in Computer Science @ VNU-HCM\n\n` +
   `## GitHub stats\n\n` +
   `![GitHub statistics card](https://bojackduy.github.io/img/github-stats.svg)\n\n` +
-  `*Snapshot of this profile on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(user.following)} following.*\n\n` +
-  `## Most starred\n\n` +
-  `| Project | What it is | ★ | Forks | Language |\n|---|---|---:|---:|---|\n${repoRows}\n\n` +
+  starEmbed + `\n` +
+  `*Snapshot of this profile on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(user.following)} following. Star chart is live, re-rendered by star-history.com on every view.*\n\n` +
   `## Top languages\n\n` +
   `| Language | Share |\n|---|---:|\n${langTable}\n\n` +
-  starSection +
-  `\n*Stats are generated from live GitHub data — refresh flow documented in [bojackduy.github.io](https://github.com/bojackduy/bojackduy.github.io).*\n`;
+  `*Stats are generated from live GitHub data — refresh flow documented in [bojackduy.github.io](https://github.com/bojackduy/bojackduy.github.io).*\n`;
 
 mkdirSync(join(ROOT, "stats-output"), { recursive: true });
 writeFileSync(join(ROOT, "stats-output/profile-README.md"), profileMd);
