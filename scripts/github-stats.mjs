@@ -298,6 +298,18 @@ const repoRows = topRepos
   .join("\n");
 const langTable = topLangs.map((l) => `| ${l.lang} | ${l.pct.toFixed(1)}% |`).join("\n");
 
+// Star-history chart: live-rendered by star-history.com on every view (xkcd
+// hand-drawn style). The repo list below is rebuilt from live data on each
+// refresh, so new repos join the chart automatically.
+const starRepos = [...owned].sort((a, b) => b.stars - a.stars).map((r) => `${LOGIN}/${r.name}`);
+const starParam = starRepos.map((r) => encodeURIComponent(r)).join("%2C");
+const starChartUrl = `https://api.star-history.com/svg?repos=${starParam}&type=Date`;
+const starPageUrl = `https://star-history.com/#${starRepos.join("&")}&Date`;
+const starSection =
+  `## Star History\n\n` +
+  `[![Star history across all ${owned.length} repos](${starChartUrl})](${starPageUrl})\n\n` +
+  `*Live chart — re-rendered by star-history.com on every view. The repo list refreshes with \`npm run stats\`.*\n`;
+
 const md =
   `# GitHub Stats\n\n` +
   `![GitHub statistics card](/img/github-stats.svg)\n\n` +
@@ -305,7 +317,8 @@ const md =
   `## Most starred\n\n` +
   `| Project | What it is | ★ | Forks | Language |\n|---|---|---:|---:|---|\n${repoRows}\n\n` +
   `## Top languages\n\n` +
-  `| Language | Share |\n|---|---:|\n${langTable}\n`;
+  `| Language | Share |\n|---|---:|\n${langTable}\n\n` +
+  starSection;
 
 writeFileSync(join(ROOT, "public/markdown/github-stats.md"), md);
 
@@ -324,7 +337,8 @@ const profileMd =
   `| Project | What it is | ★ | Forks | Language |\n|---|---|---:|---:|---|\n${repoRows}\n\n` +
   `## Top languages\n\n` +
   `| Language | Share |\n|---|---:|\n${langTable}\n\n` +
-  `*Stats are generated from live GitHub data — refresh flow documented in [bojackduy.github.io](https://github.com/bojackduy/bojackduy.github.io).*\n`;
+  starSection +
+  `\n*Stats are generated from live GitHub data — refresh flow documented in [bojackduy.github.io](https://github.com/bojackduy/bojackduy.github.io).*\n`;
 
 mkdirSync(join(ROOT, "stats-output"), { recursive: true });
 writeFileSync(join(ROOT, "stats-output/profile-README.md"), profileMd);
