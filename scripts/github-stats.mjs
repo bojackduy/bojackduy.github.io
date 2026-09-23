@@ -107,6 +107,41 @@ try {
 const date = new Date().toISOString().slice(0, 10);
 const fmt = (n) => (n ?? 0).toLocaleString("en-US");
 
+// ---- npm downloads (registry search + downloads API, no auth needed) ----
+const NPM_USER = "bojackduy";
+let npmRows = [];
+let npmMonthTotal = 0, npmAllTotal = 0;
+try {
+  const search = JSON.parse(
+    execFileSync("curl", ["-sL", "--fail", "--max-time", "30", `https://registry.npmjs.org/-/v1/search?text=maintainer:${NPM_USER}&size=100`], { encoding: "utf8", maxBuffer: 4 * 1024 * 1024 })
+  );
+  const names = [...new Set(search.objects.map((o) => o.package.name))];
+  const per = [];
+  for (const name of names) {
+    try {
+      const m = JSON.parse(execFileSync("curl", ["-sL", "--fail", "--max-time", "30", `https://api.npmjs.org/downloads/point/last-month/${encodeURIComponent(name)}`], { encoding: "utf8" }));
+      const t = JSON.parse(execFileSync("curl", ["-sL", "--fail", "--max-time", "30", `https://api.npmjs.org/downloads/point/2015-01-01:${date}/${encodeURIComponent(name)}`], { encoding: "utf8" }));
+      per.push({ name, month: m.downloads || 0, total: t.downloads || 0 });
+    } catch {
+      // Transient per-package error — skip it this run.
+    }
+  }
+  // Fold tetris-io platform binaries into the parent package.
+  const grouped = new Map();
+  for (const p of per) {
+    const key = p.name.startsWith("@bojackduy/tetris-io") ? "@bojackduy/tetris-io" : p.name;
+    const g = grouped.get(key) ?? { name: key, month: 0, total: 0 };
+    g.month += p.month; g.total += p.total; grouped.set(key, g);
+  }
+  npmRows = [...grouped.values()]
+    .map((g) => ({ ...g, short: g.name.replace("@bojackduy/", "") }))
+    .sort((a, b) => b.month - a.month);
+  npmMonthTotal = npmRows.reduce((n, r) => n + r.month, 0);
+  npmAllTotal = npmRows.reduce((n, r) => n + r.total, 0);
+} catch {
+  npmRows = [];
+}
+
 // ------------------------------------------------------- hand-drawn ----------
 
 // Deterministic wobble so re-runs with the same data produce the same card.
@@ -292,6 +327,47 @@ const svg =
 mkdirSync(join(ROOT, "public/img"), { recursive: true });
 writeFileSync(join(ROOT, "public/img/github-stats.svg"), svg);
 
+// ---- npm downloads card (same chalkboard style) ----
+let npmEmbed = "";
+let npmEmbedProfile = "";
+if (npmRows.length > 0) {
+  const maxM = Math.max(...npmRows.map((r) => r.month), 1);
+  const rowH = 38, topPad = 168, botPad = 64;
+  const npmH = topPad + npmRows.length * rowH + botPad;
+  const barX = 320, barW = 360;
+  const npmTitle = `<text x="52" y="76" font-size="44" font-weight="700" fill="${CHALK}">npm downloads</text>` +
+    `<text x="54" y="112" font-size="24" fill="${DIM}">last 30 days - ${fmt(npmMonthTotal)} total · ${fmt(npmAllTotal)} all-time</text>` +
+    squiggle(52, 124, 300);
+  const npmFrame = `<path d="${framePath(14, 14, W - 28, npmH - 28, 3)}" fill="none" stroke="${CHALK}" stroke-width="3" stroke-linecap="round"/>` +
+    `<path d="${framePath(24, 24, W - 48, npmH - 48, 2)}" fill="none" stroke="${CHALK}" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>`;
+  const npmRowsSvg = npmRows
+    .map((r, i) => {
+      const ny = topPad + 8 + i * rowH;
+      const bw = Math.max(4, (r.month / maxM) * barW);
+      const deg = j(0.9).toFixed(2);
+      const color = i === 0 ? ACCENT : BLUE;
+      return `<text x="52" y="${ny + 7}" font-size="23" fill="${CHALK}">${esc(r.short)}</text>` +
+        `<rect x="${barX}" y="${ny - 9}" width="${barW}" height="15" rx="7" fill="#33373f" opacity="0.85" transform="rotate(${deg} ${barX + 180} ${ny})"/>` +
+        `<rect x="${barX}" y="${ny - 9}" width="${bw.toFixed(1)}" height="15" rx="7" fill="${color}" transform="rotate(${deg} ${barX + 180} ${ny})"/>` +
+        `<text x="${barX + barW + 14}" y="${ny + 7}" font-size="23" fill="${DIM}">${fmt(r.month)}</text>`;
+    })
+    .join("\n  ");
+  const npmFooter = `<text x="52" y="${npmH - 24}" font-size="22" fill="${BLUE}">npmjs.com/package/@${esc(NPM_USER)}</text>` +
+    starDoodle(W - 70, npmH - 32, 12, DIM, 2);
+  const npmSvg =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${npmH}" viewBox="0 0 ${W} ${npmH}" font-family="Caveat, 'Segoe Print', 'Bradley Hand', 'Chalkboard SE', cursive">\n` +
+    (fontFace ? `<style>${fontFace}</style>\n` : "") +
+    `  <rect x="0" y="0" width="${W}" height="${npmH}" rx="18" fill="${BOARD}"/>\n` +
+    `  ${npmFrame}\n` +
+    `  ${npmTitle}\n` +
+    `  ${npmRowsSvg}\n` +
+    `  ${npmFooter}\n` +
+    `</svg>\n`;
+  writeFileSync(join(ROOT, "public/img/npm-downloads.svg"), npmSvg);
+  npmEmbed = `![npm downloads](/img/npm-downloads.svg)\n\n`;
+  npmEmbedProfile = `![npm downloads](https://bojackduy.github.io/img/npm-downloads.svg)\n\n`;
+}
+
 const langTable = topLangs.map((l) => `| ${l.lang} | ${l.pct.toFixed(1)}% |`).join("\n");
 
 // Star-history chart: live-rendered by star-history.com on every view (xkcd
@@ -312,6 +388,7 @@ const md =
   `# GitHub Stats\n\n` +
   `![GitHub statistics card](/img/github-stats.svg)\n\n` +
   starEmbed + `\n` +
+  npmEmbed +
   badgesRow + `\n` +
   `*Snapshot of [github.com/${user.login}](https://github.com/${user.login}) on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(user.following)} following. Star chart is live, re-rendered by star-history.com on every view. Refresh with \`npm run stats\`.*\n\n` +
   `## Top languages\n\n` +
@@ -347,6 +424,7 @@ const profileMd =
   `## GitHub stats\n\n` +
   `![GitHub statistics card](https://bojackduy.github.io/img/github-stats.svg)\n\n` +
   starEmbed + `\n` +
+  npmEmbedProfile +
   `*Snapshot of this profile on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(user.following)} following. Star chart is live, re-rendered by star-history.com on every view.*\n\n` +
   `<div align="center">\n` +
   `  <br>\n` +
