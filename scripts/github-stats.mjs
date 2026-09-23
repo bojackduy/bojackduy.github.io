@@ -111,17 +111,31 @@ const fmt = (n) => (n ?? 0).toLocaleString("en-US");
 const NPM_USER = "bojackduy";
 let npmRows = [];
 let npmMonthTotal = 0, npmAllTotal = 0;
+let npmTrend = new Array(12).fill(0);
+let npmTrendLabels = [];
 try {
   const search = JSON.parse(
     execFileSync("curl", ["-sL", "--fail", "--max-time", "30", `https://registry.npmjs.org/-/v1/search?text=maintainer:${NPM_USER}&size=100`], { encoding: "utf8", maxBuffer: 4 * 1024 * 1024 })
   );
   const names = [...new Set(search.objects.map((o) => o.package.name))];
+  // 12 buckets of 30 days ending today (labels = bucket-end month).
+  const endD = new Date(date + "T00:00:00Z");
+  const iso = (d) => d.toISOString().slice(0, 10);
+  const rangeStr = `${iso(new Date(endD.getTime() - 359 * 864e5))}:${iso(endD)}`;
   const per = [];
   for (const name of names) {
     try {
-      const m = JSON.parse(execFileSync("curl", ["-sL", "--fail", "--max-time", "30", `https://api.npmjs.org/downloads/point/last-month/${encodeURIComponent(name)}`], { encoding: "utf8" }));
+      const r = JSON.parse(execFileSync("curl", ["-sL", "--fail", "--max-time", "60", `https://api.npmjs.org/downloads/range/${rangeStr}/${encodeURIComponent(name)}`], { encoding: "utf8", maxBuffer: 8 * 1024 * 1024 }));
       const t = JSON.parse(execFileSync("curl", ["-sL", "--fail", "--max-time", "30", `https://api.npmjs.org/downloads/point/2015-01-01:${date}/${encodeURIComponent(name)}`], { encoding: "utf8" }));
-      per.push({ name, month: m.downloads || 0, total: t.downloads || 0 });
+      const byDay = new Map((r.downloads || []).map((d) => [d.day, d.downloads || 0]));
+      const buckets = [];
+      for (let b = 11; b >= 0; b--) {
+        const endB = new Date(endD.getTime() - b * 30 * 864e5);
+        let s = 0;
+        for (let k = 0; k < 30; k++) s += byDay.get(iso(new Date(endB.getTime() - k * 864e5))) || 0;
+        buckets.push(s);
+      }
+      per.push({ name, month: buckets[11], total: t.downloads || 0, buckets });
     } catch {
       // Transient per-package error — skip it this run.
     }
@@ -130,14 +144,18 @@ try {
   const grouped = new Map();
   for (const p of per) {
     const key = p.name.startsWith("@bojackduy/tetris-io") ? "@bojackduy/tetris-io" : p.name;
-    const g = grouped.get(key) ?? { name: key, month: 0, total: 0 };
-    g.month += p.month; g.total += p.total; grouped.set(key, g);
+    let g = grouped.get(key);
+    if (!g) { g = { name: key, month: 0, total: 0, buckets: new Array(12).fill(0) }; grouped.set(key, g); }
+    g.month += p.month; g.total += p.total;
+    p.buckets.forEach((v, i) => { g.buckets[i] += v; });
   }
   npmRows = [...grouped.values()]
     .map((g) => ({ ...g, short: g.name.replace("@bojackduy/", "") }))
     .sort((a, b) => b.month - a.month);
   npmMonthTotal = npmRows.reduce((n, r) => n + r.month, 0);
   npmAllTotal = npmRows.reduce((n, r) => n + r.total, 0);
+  npmTrendLabels = [];
+  for (let b = 11; b >= 0; b--) npmTrendLabels.push(new Date(endD.getTime() - b * 30 * 864e5).toLocaleString("en-US", { month: "short", timeZone: "UTC" }));
 } catch {
   npmRows = [];
 }
@@ -283,23 +301,103 @@ const heatTitle = calendar.total === null
   : `<text x="${W / 2}" y="342" text-anchor="middle" font-size="29" fill="${CHALK}">${fmt(calendar.total)} contributions in the last year</text>`;
 const heatArrow = arrowDoodle(heatX0 + heatW + 44, heatY0 + 118, heatX0 + heatW + 8, heatY0 + 78);
 
-// Top languages
+// Top languages — hand-drawn donut
 const langTitleY = heatY0 + 7 * pitch + 56;
-const langRows = topLangs
-  .map((l, i) => {
-    const ly = langTitleY + 30 + i * 38;
-    const bw = Math.max(4, (l.pct / 100) * 400);
-    const deg = j(0.9).toFixed(2);
-    const color = LANG_COLORS[l.lang] ?? FALLBACK_COLOR;
-    return `<text x="52" y="${ly + 7}" font-size="24" fill="${CHALK}">${esc(l.lang)}</text>` +
-      `<rect x="262" y="${ly - 9}" width="400" height="15" rx="7" fill="#33373f" opacity="0.85" transform="rotate(${deg} 462 ${ly})"/>` +
-      `<rect x="262" y="${ly - 9}" width="${bw.toFixed(1)}" height="15" rx="7" fill="${color}" transform="rotate(${deg} 462 ${ly})"/>` +
-      `<text x="678" y="${ly + 7}" font-size="24" fill="${DIM}">${l.pct.toFixed(1)}%</text>`;
-  })
-  .join("\n");
 const langTitle = `<text x="52" y="${langTitleY}" font-size="29" fill="${CHALK}">top languages</text>` + squiggle(52, langTitleY + 10, 150, BLUE, 2.5);
+const donutCx = 210, donutCy = langTitleY + 160, donutR = 92;
+const rad = (deg) => (deg * Math.PI) / 180;
+// Point at t degrees clockwise from 12 o'clock (screen coords, y down).
+const dpt = (cx, cy, r, t) => [cx + r * Math.sin(rad(t)), cy - r * Math.cos(rad(t))];
+let donutAcc = 0;
+const donutSegs = topLangs
+  .map((l) => {
+    const frac = l.pct / 100;
+    const color = LANG_COLORS[l.lang] ?? FALLBACK_COLOR;
+    const GAP = 2; // degrees of breathing room on each side
+    const a0 = donutAcc * 360 + GAP, a1 = (donutAcc + frac) * 360 - GAP;
+    const ccx = donutCx + j(1.5), ccy = donutCy + j(1.5), rr = donutR + j(1);
+    let seg;
+    if (a1 > a0) {
+      const [x0, y0] = dpt(ccx, ccy, rr, a0);
+      const [x1, y1] = dpt(ccx, ccy, rr, a1);
+      const large = frac * 360 - GAP * 2 > 180 ? 1 : 0;
+      seg = `<path d="M ${x0.toFixed(1)} ${y0.toFixed(1)} A ${rr.toFixed(1)} ${rr.toFixed(1)} 0 ${large} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}" fill="none" stroke="${color}" stroke-width="30" stroke-linecap="round"/>`;
+    } else {
+      // Sliver too small for an arc — a dot at its midpoint instead.
+      const [dx, dy] = dpt(ccx, ccy, rr, (donutAcc + frac / 2) * 360);
+      seg = `<circle cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="9" fill="${color}"/>`;
+    }
+    donutAcc += frac;
+    return seg;
+  })
+  .join("\n  ");
+const langLegend = topLangs
+  .map((l, i) => {
+    const ly = langTitleY + 66 + i * 37;
+    const color = LANG_COLORS[l.lang] ?? FALLBACK_COLOR;
+    return `<rect x="392" y="${ly - 14}" width="17" height="17" rx="5" fill="${color}" transform="rotate(${j(3).toFixed(1)} 400 ${ly - 5})"/>` +
+      `<text x="420" y="${ly + 2}" font-size="24" fill="${CHALK}">${esc(l.lang)}</text>` +
+      `<text x="700" y="${ly + 2}" font-size="24" fill="${DIM}">${l.pct.toFixed(1)}%</text>`;
+  })
+  .join("\n  ");
+const langBottom = langTitleY + 66 + (topLangs.length - 1) * 37 + 30;
 
-const footerY = langTitleY + 30 + (topLangs.length - 1) * 38 + 62;
+// npm downloads — hand-drawn trend lines, star-history style
+function niceCeil(v) {
+  if (v <= 0) return 1;
+  const p = Math.pow(10, Math.floor(Math.log10(v)));
+  const n = v / p;
+  return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * p;
+}
+let npmSection = "";
+let npmBottom = langBottom;
+if (npmRows.length > 0) {
+  const TREND_COLORS = [BLUE, "#3fb950", "#a371f7"];
+  const trendTop = npmRows.slice(0, 3);
+  npmTrend = npmRows.reduce((acc, r) => acc.map((v, i) => v + r.buckets[i]), new Array(12).fill(0));
+  const tMax = niceCeil(Math.max(...npmTrend, 1));
+  const tX0 = 84, tX1 = 852, tH = 190;
+  const tY1 = langBottom + 326, tY0 = tY1 - tH;
+  const tx = (i) => tX0 + (i * (tX1 - tX0)) / 11;
+  const ty = (v) => tY1 - (v / tMax) * tH;
+  const lineFor = (vals, color, width, dots) => {
+    let s = `<path d="${vals.map((v, i) => `${i === 0 ? "M" : "L"} ${tx(i).toFixed(1)} ${ty(v).toFixed(1)}`).join(" ")}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    if (dots) s += vals.map((v, i) => `<circle cx="${tx(i).toFixed(1)}" cy="${ty(v).toFixed(1)}" r="4" fill="${color}"/>`).join("");
+    return s;
+  };
+  const tGrid = [0.25, 0.5, 0.75]
+    .map((fr) => {
+      const gy = tY1 - fr * tH;
+      return `<line x1="${tX0}" y1="${gy.toFixed(1)}" x2="${tX1}" y2="${(gy + j(1.5)).toFixed(1)}" stroke="#3a3f47" stroke-width="1.5" stroke-dasharray="6 6"/>` +
+        `<text x="${tX0 - 10}" y="${(gy + 6).toFixed(1)}" text-anchor="end" font-size="18" fill="${DIM}">${fmt(Math.round(tMax * fr))}</text>`;
+    })
+    .join("\n  ");
+  const tAxes = `<path d="M ${tX0} ${(tY0 - 8).toFixed(1)} Q ${(tX0 + j(3)).toFixed(1)} ${((tY0 + tY1) / 2).toFixed(1)} ${tX0} ${tY1} L ${(tX1 + 6).toFixed(1)} ${(tY1 + j(2)).toFixed(1)}" fill="none" stroke="${CHALK}" stroke-width="2.5" stroke-linecap="round"/>`;
+  const tXLabels = npmTrendLabels
+    .map((m, i) => (i % 2 === 0 ? `<text x="${tx(i).toFixed(1)}" y="${tY1 + 26}" text-anchor="middle" font-size="18" fill="${DIM}">${m}</text>` : ""))
+    .filter(Boolean)
+    .join("\n  ");
+  const trendLines = lineFor(npmTrend, ACCENT, 4.5, true) + "\n  " +
+    trendTop.map((r, i) => lineFor(r.buckets, TREND_COLORS[i % TREND_COLORS.length], 2.5, false)).join("\n  ");
+  let legX = 84, legY = tY1 + 58;
+  const trendLegend = [{ label: "all", color: ACCENT, width: 4 }, ...trendTop.map((r, i) => ({ label: `${r.short} · ${fmt(r.month)}/mo`, color: TREND_COLORS[i % TREND_COLORS.length], width: 2.5 }))]
+    .map((e) => {
+      const w = e.label.length * 8.5 + 52;
+      if (legX + w > 860) { legX = 84; legY += 30; }
+      const s = `<line x1="${legX}" y1="${legY}" x2="${legX + 34}" y2="${(legY + j(1)).toFixed(1)}" stroke="${e.color}" stroke-width="${e.width}" stroke-linecap="round"/>` +
+        `<text x="${legX + 42}" y="${legY + 7}" font-size="20" fill="${CHALK}">${esc(e.label)}</text>`;
+      legX += w + 18;
+      return s;
+    })
+    .join("\n  ");
+  const npmTitleY = langBottom + 64;
+  npmSection =
+    `<text x="52" y="${npmTitleY}" font-size="29" fill="${CHALK}">npm downloads - last 12 mo · ${fmt(npmMonthTotal)}/mo · ${fmt(npmAllTotal)} all-time</text>` + squiggle(52, npmTitleY + 10, 300, ACCENT, 2.5) + "\n  " +
+    tGrid + "\n  " + tAxes + "\n  " + tXLabels + "\n  " + trendLines + "\n  " + trendLegend;
+  npmBottom = legY + 40;
+}
+
+const footerY = npmBottom + 52;
 const footer = `<text x="52" y="${footerY}" font-size="22" fill="${BLUE}">drawn with code - github.com/${esc(user.login)}</text>` +
   starDoodle(W - 70, footerY - 8, 12, DIM, 2);
 
@@ -320,55 +418,14 @@ const svg =
   `  ${heatCells}\n` +
   `  ${heatArrow}\n` +
   `  ${langTitle}\n` +
-  `  ${langRows}\n` +
+  `  ${donutSegs}\n` +
+  `  ${langLegend}\n` +
+  `  ${npmSection}\n` +
   `  ${footer}\n` +
   `</svg>\n`;
 
 mkdirSync(join(ROOT, "public/img"), { recursive: true });
 writeFileSync(join(ROOT, "public/img/github-stats.svg"), svg);
-
-// ---- npm downloads card (same chalkboard style) ----
-let npmEmbed = "";
-let npmEmbedProfile = "";
-if (npmRows.length > 0) {
-  const maxM = Math.max(...npmRows.map((r) => r.month), 1);
-  const rowH = 38, topPad = 168, botPad = 64;
-  const npmH = topPad + npmRows.length * rowH + botPad;
-  const barX = 320, barW = 360;
-  const npmTitle = `<text x="52" y="76" font-size="44" font-weight="700" fill="${CHALK}">npm downloads</text>` +
-    `<text x="54" y="112" font-size="24" fill="${DIM}">last 30 days - ${fmt(npmMonthTotal)} total · ${fmt(npmAllTotal)} all-time</text>` +
-    squiggle(52, 124, 300);
-  const npmFrame = `<path d="${framePath(14, 14, W - 28, npmH - 28, 3)}" fill="none" stroke="${CHALK}" stroke-width="3" stroke-linecap="round"/>` +
-    `<path d="${framePath(24, 24, W - 48, npmH - 48, 2)}" fill="none" stroke="${CHALK}" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>`;
-  const npmRowsSvg = npmRows
-    .map((r, i) => {
-      const ny = topPad + 8 + i * rowH;
-      const bw = Math.max(4, (r.month / maxM) * barW);
-      const deg = j(0.9).toFixed(2);
-      const color = i === 0 ? ACCENT : BLUE;
-      return `<text x="52" y="${ny + 7}" font-size="23" fill="${CHALK}">${esc(r.short)}</text>` +
-        `<rect x="${barX}" y="${ny - 9}" width="${barW}" height="15" rx="7" fill="#33373f" opacity="0.85" transform="rotate(${deg} ${barX + 180} ${ny})"/>` +
-        `<rect x="${barX}" y="${ny - 9}" width="${bw.toFixed(1)}" height="15" rx="7" fill="${color}" transform="rotate(${deg} ${barX + 180} ${ny})"/>` +
-        `<text x="${barX + barW + 14}" y="${ny + 7}" font-size="23" fill="${DIM}">${fmt(r.month)}</text>`;
-    })
-    .join("\n  ");
-  const npmFooter = `<text x="52" y="${npmH - 24}" font-size="22" fill="${BLUE}">npmjs.com/package/@${esc(NPM_USER)}</text>` +
-    starDoodle(W - 70, npmH - 32, 12, DIM, 2);
-  const npmSvg =
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${npmH}" viewBox="0 0 ${W} ${npmH}" font-family="Caveat, 'Segoe Print', 'Bradley Hand', 'Chalkboard SE', cursive">\n` +
-    (fontFace ? `<style>${fontFace}</style>\n` : "") +
-    `  <rect x="0" y="0" width="${W}" height="${npmH}" rx="18" fill="${BOARD}"/>\n` +
-    `  ${npmFrame}\n` +
-    `  ${npmTitle}\n` +
-    `  ${npmRowsSvg}\n` +
-    `  ${npmFooter}\n` +
-    `</svg>\n`;
-  writeFileSync(join(ROOT, "public/img/npm-downloads.svg"), npmSvg);
-  npmEmbed = `![npm downloads](/img/npm-downloads.svg)\n\n`;
-  npmEmbedProfile = `![npm downloads](https://bojackduy.github.io/img/npm-downloads.svg)\n\n`;
-}
-
-const langTable = topLangs.map((l) => `| ${l.lang} | ${l.pct.toFixed(1)}% |`).join("\n");
 
 // Star-history chart: live-rendered by star-history.com on every view (xkcd
 // hand-drawn style). The repo list below is rebuilt from live data on each
@@ -388,11 +445,8 @@ const md =
   `# GitHub Stats\n\n` +
   `![GitHub statistics card](/img/github-stats.svg)\n\n` +
   starEmbed + `\n` +
-  npmEmbed +
   badgesRow + `\n` +
-  `*Snapshot of [github.com/${user.login}](https://github.com/${user.login}) on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(user.following)} following. Star chart is live, re-rendered by star-history.com on every view. Refresh with \`npm run stats\`.*\n\n` +
-  `## Top languages\n\n` +
-  `| Language | Share |\n|---|---:|\n${langTable}\n`;
+  `*Snapshot of [github.com/${user.login}](https://github.com/${user.login}) on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(npmAllTotal)} npm downloads. Star chart is live, re-rendered by star-history.com on every view. Refresh with \`npm run stats\`.*\n`;
 
 writeFileSync(join(ROOT, "public/markdown/github-stats.md"), md);
 
@@ -424,19 +478,16 @@ const profileMd =
   `## GitHub stats\n\n` +
   `![GitHub statistics card](https://bojackduy.github.io/img/github-stats.svg)\n\n` +
   starEmbed + `\n` +
-  npmEmbedProfile +
-  `*Snapshot of this profile on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(user.following)} following. Star chart is live, re-rendered by star-history.com on every view.*\n\n` +
+  `*Snapshot of this profile on ${date} — ${fmt(user.public_repos)} public repos, ${fmt(totalStars)} stars earned, ${fmt(npmAllTotal)} npm downloads. Star chart is live, re-rendered by star-history.com on every view.*\n\n` +
   `<div align="center">\n` +
   `  <br>\n` +
   `  <img src="${streakUrl}" alt="GitHub Streak" height="200px"/>\n` +
   `</div>\n\n` +
   `---\n\n` +
-  `## Top languages\n\n` +
-  `| Language | Share |\n|---|---:|\n${langTable}\n\n` +
   `*Stats are generated from live GitHub data — refresh flow documented in [bojackduy.github.io](https://github.com/bojackduy/bojackduy.github.io).*\n\n` +
   `<img width="100%" src="${capsuleFooter}" alt="footer"/>\n`;
 
 mkdirSync(join(ROOT, "stats-output"), { recursive: true });
 writeFileSync(join(ROOT, "stats-output/profile-README.md"), profileMd);
 
-console.log(`repos=${user.public_repos} stars=${totalStars} forks=${totalForks} followers=${user.followers} contributions=${calendar.total} heat_weeks=${calendar.weeks.length} langs=${topLangs.map((l) => `${l.lang} ${l.pct.toFixed(0)}%`).join(", ")}`);
+console.log(`repos=${user.public_repos} stars=${totalStars} forks=${totalForks} followers=${user.followers} contributions=${calendar.total} heat_weeks=${calendar.weeks.length} langs=${topLangs.map((l) => `${l.lang} ${l.pct.toFixed(0)}%`).join(", ")} npm_month=${npmMonthTotal} npm_total=${npmAllTotal}`);

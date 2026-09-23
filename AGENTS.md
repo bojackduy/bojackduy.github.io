@@ -23,7 +23,7 @@ The production build is emitted to `docs/` for GitHub Pages.
 - `src/configs/terminal.tsx`: fake terminal filesystem
 - `public/markdown/`: biography, experience, and project case studies
 - `src/configs/user.ts`: profile name and avatar
-- `scripts/github-stats.mjs`: regenerates `public/img/github-stats.svg` + `public/img/npm-downloads.svg` + `public/markdown/github-stats.md` + `stats-output/profile-README.md` via `npm run stats` (needs `gh-personal`; `GH_CMD=gh` in CI; npm registry/downloads APIs need no auth). Auto-runs monthly via `.github/workflows/refresh-stats.yml`; `bojackduy/bojackduy` has a matching workflow syncing the profile README. NOTE: script must use the public `users/:login` endpoint, never `/user` (403s for Actions tokens).
+- `scripts/github-stats.mjs`: regenerates the single combined `public/img/github-stats.svg` (totals, contributions heatmap, languages donut, npm trend lines) + `public/markdown/github-stats.md` + `stats-output/profile-README.md` via `npm run stats` (needs `gh-personal`; `GH_CMD=gh` in CI; npm registry/downloads APIs need no auth). No manual markdown stats tables — all numbers live inside the SVG or live badges. Auto-runs monthly via `.github/workflows/refresh-stats.yml`; `bojackduy/bojackduy` has a matching workflow syncing the profile README. NOTE: script must use the public `users/:login` endpoint, never `/user` (403s for Actions tokens). NOTE: never use `pathLength` for SVG donut/dash math — librsvg ignores it; use explicit arc coordinates instead.
 
 ## Conventions
 
