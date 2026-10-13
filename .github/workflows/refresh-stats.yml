@@ -1,11 +1,10 @@
 # Regenerates the GitHub stats snapshot (card, portfolio note, profile README
-# source) from live GitHub data. Runs monthly; can also be triggered manually
-# from the Actions tab (workflow_dispatch).
+# source) from live GitHub data. Manual-only (workflow_dispatch from the
+# Actions tab) — no schedule: the npm badges and star chart render live, so
+# scheduled re-renders just burn Actions minutes.
 name: refresh-stats
 
 on:
-  schedule:
-    - cron: "0 2 1 * *"
   workflow_dispatch:
 
 permissions:

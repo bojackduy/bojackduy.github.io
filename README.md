@@ -23,16 +23,17 @@ npm run lint
 npm run build
 ```
 
-GitHub stats (card, note tables, most-starred) refresh automatically: the
-`refresh-stats` workflow in this repo regenerates the snapshot monthly (plus
-manual dispatch from the Actions tab), and the matching workflow in
-`bojackduy/bojackduy` syncs the profile README from it.
-
-Manual refresh (requires `gh-personal`):
+GitHub stats: the card is a manual snapshot — regenerate it with the
+`refresh-stats` workflow (manual dispatch from the Actions tab) or locally
+(requires `gh-personal`):
 
 ```bash
 npm run stats
 ```
+
+The npm badges and star chart render live on every view, so no scheduled
+refresh runs; the matching workflow in `bojackduy/bojackduy` syncs the
+profile README from the snapshot on manual dispatch.
 
 The production build is written to `docs/` and served by GitHub Pages from the `main` branch.
 
