@@ -25,7 +25,7 @@ const bear: BearData[] = [
         title: "GitHub Stats",
         file: "markdown/github-stats.md",
         icon: "i-icon-park-outline:github",
-        excerpt: "Stars, repos, followers, and top languages"
+        excerpt: "Stars, repos, followers, and npm downloads"
       },
       {
         id: "about-site",

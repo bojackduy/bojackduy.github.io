@@ -29,13 +29,11 @@ Backend software engineer and open-source developer working across production sy
 
 ## GitHub stats
 
-![GitHub statistics card](https://bojackduy.github.io/img/github-stats.svg)
-
 [![Star history across all 20 repos](https://api.star-history.com/svg?repos=bojackduy%2Fnvim-herdr-navigation%2Cbojackduy%2Flazyconfluence%2Cbojackduy%2Fopencode-telescope%2Cbojackduy%2Fopencode-loopd%2Cbojackduy%2FLEGv8%2Cbojackduy%2Fopencode-learn%2Cbojackduy%2Fbojackduy%2Cbojackduy%2Fbojackduy.github.io%2Cbojackduy%2Flazyjira%2Cbojackduy%2FLockout-Web%2Cbojackduy%2Fnvim%2Cbojackduy%2Fopencode-db-client%2Cbojackduy%2Fopencode-fleet%2Cbojackduy%2Fopencode-fork-lane%2Cbojackduy%2Fopencode-prompt-left%2Cbojackduy%2Fopencode-system-override%2Cbojackduy%2Fopentui-three-showcase%2Cbojackduy%2FReal-estate-price-prediction%2Cbojackduy%2Ftetris-io%2Cbojackduy%2Ftic-tac-toe&type=Date)](https://star-history.com/#bojackduy/nvim-herdr-navigation&bojackduy/lazyconfluence&bojackduy/opencode-telescope&bojackduy/opencode-loopd&bojackduy/LEGv8&bojackduy/opencode-learn&bojackduy/bojackduy&bojackduy/bojackduy.github.io&bojackduy/lazyjira&bojackduy/Lockout-Web&bojackduy/nvim&bojackduy/opencode-db-client&bojackduy/opencode-fleet&bojackduy/opencode-fork-lane&bojackduy/opencode-prompt-left&bojackduy/opencode-system-override&bojackduy/opentui-three-showcase&bojackduy/Real-estate-price-prediction&bojackduy/tetris-io&bojackduy/tic-tac-toe&Date)
 
 [![lazyconfluence total downloads](https://img.shields.io/npm/dt/@bojackduy/lazyconfluence?label=lazyconfluence%20downloads&color=00bfff)](https://www.npmjs.com/package/@bojackduy/lazyconfluence)
 
-*Snapshot of this profile on 2026-10-01 — 25 public repos, 18 stars earned, 34,943 npm downloads all-time (manual snapshot; badge above is live). Star chart is live, re-rendered by star-history.com on every view.*
+*Snapshot of this profile on 2026-10-01 — 25 public repos, 18 stars earned, 34,943 npm downloads all-time. Totals are a manual snapshot; npm badges and star chart above are live on every view.*
 
 <div align="center">
   <br>
@@ -44,6 +42,6 @@ Backend software engineer and open-source developer working across production sy
 
 ---
 
-*Card is a manual snapshot (`npm run stats` or manual workflow dispatch); npm badges and star chart are live. Flow documented in [bojackduy.github.io](https://github.com/bojackduy/bojackduy.github.io).*
+*Totals are a manual snapshot (`npm run stats` or manual workflow dispatch); npm badges, star chart, and streak are live. Flow documented in [bojackduy.github.io](https://github.com/bojackduy/bojackduy.github.io).*
 
 <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:1e90ff,100:00bfff&height=120&section=footer" alt="footer"/>

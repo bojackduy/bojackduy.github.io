@@ -23,7 +23,7 @@ npm run lint
 npm run build
 ```
 
-GitHub stats: the card is a manual snapshot — regenerate it with the
+GitHub stats: the totals are a manual snapshot — regenerate with the
 `refresh-stats` workflow (manual dispatch from the Actions tab) or locally
 (requires `gh-personal`):
 
@@ -31,9 +31,10 @@ GitHub stats: the card is a manual snapshot — regenerate it with the
 npm run stats
 ```
 
-The npm badges and star chart render live on every view, so no scheduled
-refresh runs; the matching workflow in `bojackduy/bojackduy` syncs the
-profile README from the snapshot on manual dispatch.
+The npm badges, star chart, and streak render live on every view, so no
+scheduled refresh runs; the matching workflow in `bojackduy/bojackduy` syncs
+the profile README from the snapshot on manual dispatch. No pre-rendered
+stats image is committed.
 
 The production build is written to `docs/` and served by GitHub Pages from the `main` branch.
 
