@@ -31,7 +31,20 @@ Backend software engineer and open-source developer working across production sy
 
 [![Star history across all 20 repos](https://api.star-history.com/svg?repos=bojackduy%2Fnvim-herdr-navigation%2Cbojackduy%2Flazyconfluence%2Cbojackduy%2Fopencode-telescope%2Cbojackduy%2Fopencode-loopd%2Cbojackduy%2FLEGv8%2Cbojackduy%2Fopencode-learn%2Cbojackduy%2Fbojackduy%2Cbojackduy%2Fbojackduy.github.io%2Cbojackduy%2Flazyjira%2Cbojackduy%2FLockout-Web%2Cbojackduy%2Fnvim%2Cbojackduy%2Fopencode-db-client%2Cbojackduy%2Fopencode-fleet%2Cbojackduy%2Fopencode-fork-lane%2Cbojackduy%2Fopencode-prompt-left%2Cbojackduy%2Fopencode-system-override%2Cbojackduy%2Fopentui-three-showcase%2Cbojackduy%2FReal-estate-price-prediction%2Cbojackduy%2Ftetris-io%2Cbojackduy%2Ftic-tac-toe&type=Date)](https://star-history.com/#bojackduy/nvim-herdr-navigation&bojackduy/lazyconfluence&bojackduy/opencode-telescope&bojackduy/opencode-loopd&bojackduy/LEGv8&bojackduy/opencode-learn&bojackduy/bojackduy&bojackduy/bojackduy.github.io&bojackduy/lazyjira&bojackduy/Lockout-Web&bojackduy/nvim&bojackduy/opencode-db-client&bojackduy/opencode-fleet&bojackduy/opencode-fork-lane&bojackduy/opencode-prompt-left&bojackduy/opencode-system-override&bojackduy/opentui-three-showcase&bojackduy/Real-estate-price-prediction&bojackduy/tetris-io&bojackduy/tic-tac-toe&Date)
 
-[![lazyconfluence total downloads](https://img.shields.io/npm/dt/@bojackduy/lazyconfluence?label=lazyconfluence%20downloads&color=00bfff)](https://www.npmjs.com/package/@bojackduy/lazyconfluence)
+[![opencode-loopd downloads](https://img.shields.io/npm/dt/@bojackduy/opencode-loopd?label=opencode-loopd&color=00bfff)](https://www.npmjs.com/package/@bojackduy/opencode-loopd)
+[![opencode-learn downloads](https://img.shields.io/npm/dt/@bojackduy/opencode-learn?label=opencode-learn&color=00bfff)](https://www.npmjs.com/package/@bojackduy/opencode-learn)
+[![opencode-telescope downloads](https://img.shields.io/npm/dt/@bojackduy/opencode-telescope?label=opencode-telescope&color=00bfff)](https://www.npmjs.com/package/@bojackduy/opencode-telescope)
+[![opencode-voice downloads](https://img.shields.io/npm/dt/@bojackduy/opencode-voice?label=opencode-voice&color=00bfff)](https://www.npmjs.com/package/@bojackduy/opencode-voice)
+[![opencode-fleet downloads](https://img.shields.io/npm/dt/@bojackduy/opencode-fleet?label=opencode-fleet&color=00bfff)](https://www.npmjs.com/package/@bojackduy/opencode-fleet)
+[![opencode-herdr-control downloads](https://img.shields.io/npm/dt/@bojackduy/opencode-herdr-control?label=opencode-herdr-control&color=00bfff)](https://www.npmjs.com/package/@bojackduy/opencode-herdr-control)
+[![opencode-fork-lane downloads](https://img.shields.io/npm/dt/@bojackduy/opencode-fork-lane?label=opencode-fork-lane&color=00bfff)](https://www.npmjs.com/package/@bojackduy/opencode-fork-lane)
+[![opencode-system-override downloads](https://img.shields.io/npm/dt/@bojackduy/opencode-system-override?label=opencode-system-override&color=00bfff)](https://www.npmjs.com/package/@bojackduy/opencode-system-override)
+[![opencode-prompt-left downloads](https://img.shields.io/npm/dt/@bojackduy/opencode-prompt-left?label=opencode-prompt-left&color=00bfff)](https://www.npmjs.com/package/@bojackduy/opencode-prompt-left)
+[![opencode-db-client downloads](https://img.shields.io/npm/dt/@bojackduy/opencode-db-client?label=opencode-db-client&color=00bfff)](https://www.npmjs.com/package/@bojackduy/opencode-db-client)
+[![lazyjira downloads](https://img.shields.io/npm/dt/@bojackduy/lazyjira?label=lazyjira&color=00bfff)](https://www.npmjs.com/package/@bojackduy/lazyjira)
+[![lazyconfluence downloads](https://img.shields.io/npm/dt/@bojackduy/lazyconfluence?label=lazyconfluence&color=00bfff)](https://www.npmjs.com/package/@bojackduy/lazyconfluence)
+[![opentui-three-showcase downloads](https://img.shields.io/npm/dt/@bojackduy/opentui-three-showcase?label=opentui-three-showcase&color=00bfff)](https://www.npmjs.com/package/@bojackduy/opentui-three-showcase)
+[![tetris-io downloads](https://img.shields.io/npm/dt/@bojackduy/tetris-io?label=tetris-io&color=00bfff)](https://www.npmjs.com/package/@bojackduy/tetris-io)
 
 *Snapshot of this profile on 2026-10-01 — 25 public repos, 18 stars earned, 34,943 npm downloads all-time. Totals are a manual snapshot; npm badges and star chart above are live on every view.*
 

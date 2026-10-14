@@ -112,9 +112,9 @@ const badgesRow =
 
 // Live per-package all-time download badges: shields queries the npm API on
 // every view, so these stay fresh with zero scheduled runs. The summed total
-// in the snapshot lines below remains a manual snapshot. Top 3 by last-month
-// downloads, so newly published packages rotate in automatically.
-const npmLiveBadges = npmRows.slice(0, 3)
+// in the snapshot lines below remains a manual snapshot. Every package is
+// listed, ordered by last-month downloads so the busiest float to the top.
+const npmLiveBadges = npmRows
   .map((r) => `[![${esc(r.short)} total downloads](https://img.shields.io/npm/dt/${r.name}?label=${encodeURIComponent(`${r.short} downloads`)}&color=00bfff)](https://www.npmjs.com/package/${r.name})`)
   .join(" ");
 const npmLiveLine = npmLiveBadges ? npmLiveBadges + `\n\n` : "";
